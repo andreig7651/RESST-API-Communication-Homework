@@ -1,0 +1,51 @@
+## Gavriliu Andrei-MIhai 323 CB ##
+
+client.c - check_input - functie ce verifica validitatea inputului,adica ca acesta sa nu fie ""(null);
+         - check_space - funcite ce verifica ca numele de utilizator sa nu contina spatiu;
+         - isNumber - functie ce verifica daca stringul introdus este de tip numeric sau nu(folosita pentru verificarea ID si page_count);
+         - removeChar - functie ce elimina toate aparitiile unui caracter dintr-un sir;
+         - main - programul functioneaza atat timp cat nu primim comanda exit,care ii va intrerupe activitatea;
+                - deoarece facem citirea de la tastatura cu fgets, de fiecare data va trebui sa escapam caracterul '\n' de la final;
+                - daca primim comanda "register" - cat timp username si password le primim gresite,le vom cere din nou utilizatorului;
+                                                 - initializam obiectul JSON in care adaugam cele 2 campuri citite de la tastatura;
+                                                 - serializam obiectul JSON intr-un string pe care il vom trimite prin cererea post;
+                                                 - interpretam raspunsul intors de la server; afisam la stdout mesajul corespunzator,dar si 
+                                                 pe cele de eroare la stderr;
+
+                - daca primim comanda "login" - avem variabila login,initializata la inceputul programului cu 0; daca cineva este logat aceasta va deveni 1,iar
+                                              alti utilizatori nu se vor mai putea loga si va trebui introdusa o comanda noua;verificam acest aspect inainte de toate;
+                                              - cerem username si password de la tastatura si le verificam corectitudinea;construim obiectul JSON si trimitem cererea de tip post;
+                                              - primim raspunsul de la server, tratam cazurile de eroare; in caz de succes,extragem cookie-ul; setam login = 1;
+                
+                - daca primim comanda "enter_library" - trimitem cererea de get si interpretam raspunsul primit;
+                                                      - cazul de eroare este atunci cand nu suntem logati;
+                                                      - in caz de succes, extragem tokenul;
+
+                - daca primim comanda "get_books" - verificam variabila login prima data;
+                                                  - trimitem cererea de tip get; interpretam raspunsul si afisam ,daca e nevoie ,mesajul de eroare;
+                                                  - tratam cazul in care lista de carti este goala;
+                                                  - in caz de succes,prelucram raspunsul primit in format JSON; elimianm parantezele patrate de la inceput si de la sfarsit si afisam informatiile,pe scurt,despre fiecare carte;
+                
+                - daca primim comanda "get_book" - verificam variabila login; cerem un id de la tastatura si ii verificam corectitudinea;
+                                                 - interpretam raspunsul primit de cererea get;tratam cazurile de eroare;
+                                                 - in caz de succes, afisam detaliile despre carte, pe cate un rand fiecare camp;
+                                                 - eliminam ghilimelele si transformam prima litera in litera mare;
+                
+                - daca primim comanda "add_book" - citim datele despre carte si le verificam corectitudinea; verificam ca page_count sa fie numeric;
+                                                 altfel, vom cere din nou informatia respectiva;
+                                                 - initializam un obiect JSON, ii completam campurile si il convertim la un sir de caractere;
+                                                 - interpretam raspunsul serverului;
+                
+                - daca primim comanda "delete_book" - varificam corectitudinea datelor de intrare;
+                                                    - trimitem cererea de delete serverului;(cererea este asemanatoare celei de get);
+                                                    - interpretam raspunsul si afisam mesajele de eroare sau cel de succes;
+                
+                - daca primim comanda "logout" - trimitem cererea de get serverului; tratam eroarea cand nu este nimeni logat;
+
+                - daca primim comanda "exit" - facem break;
+
+                - daca primim orice alta comanda, vom afisa un mesaj de eroare;
+
+                - pentru parsarea JSON am folosit catvea functii din biblioteca parson.h deoarece mi s-a parut destul de usor de lucrat cu aceasta;
+                - am incercat pe cat posibil sa tratez toate cazurile de eroare care pot aparea in program si sa afise mesaje corespunzatoare la stderr;
+                - pe alocuri, am lasat comentata comanda puts pentru message si response pentru a se evidentia modul de lucru cu mesajul si raspunsul;
